@@ -13,7 +13,6 @@ def app_menu():
         elif prompt_res == "B":
             tasks_search()
         elif prompt_res == "C":
-            print("CCCCC")
             sys.exit()
         else:
             print("Error: Please provide a valid input: a,b or c\n")
