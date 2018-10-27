@@ -6,6 +6,7 @@ MAIN_MENU_PROMPT = "WORK_LOG\nWhat would you like to do?\na) add new entry\n" \
 
 
 def app_menu():
+    """Application menu"""
     while True:
         prompt_res = input(MAIN_MENU_PROMPT).upper()
         if prompt_res == "A":

@@ -15,8 +15,11 @@ results_list = []
 
 def show_search_results():
     """Show to the user the search results in a appropriate format"""
-    print("\n")
+    if len(results_list) == 0:
+        print("None task found!!\n")
+        return
     for i in results_list:
+        print("\n")
         print("Date:       ", i['Date'])
         print("Title:      ", i['Name'])
         print("Time Spent: ", i['Time'])
@@ -29,58 +32,62 @@ def show_search_results():
 
 def search_csv(key, value):
     """Search csv for value, append results list"""
-    with open(filename, newline='') as csvfile:
-        csv_reader = csv.DictReader(csvfile, delimiter=',')
-        for row in csv_reader:
-            if row[key] == value:
-                results_list.append(row)
+    try:
+        with open(filename, newline='') as csvfile:
+            csv_reader = csv.DictReader(csvfile, delimiter=',')
+            for row in csv_reader:
+                if row[key] == value:
+                    results_list.append(row)
+    except FileNotFoundError:
+        print("\nError: File " + filename + " not found\nPlease create an entry first\n")
+    except IOError:
+        print("\nError opening file: " + filename)
 
 
 def search_regex_csv(key, pattern):
     """Search csv for value, append results list"""
-    with open(filename, newline='') as csvfile:
-        csv_reader = csv.DictReader(csvfile, delimiter=',')
-        for row in csv_reader:
-            if re.search(r'%s' % pattern, row[key]):
-                results_list.append(row)
+    try:
+        with open(filename, newline='') as csvfile:
+            csv_reader = csv.DictReader(csvfile, delimiter=',')
+            for row in csv_reader:
+                if re.search(r'%s' % pattern, row[key]):
+                    results_list.append(row)
+    except FileNotFoundError:
+        print("\nError: File "+filename+" not found\nPlease create an entry first\n")
+    except IOError:
+        print("\nError opening file: " + filename)
 
 
 def date_search():
-    """Search tasks in the csv based on date input
-       Show results
-    """
+    """Search tasks in the csv based on date input"""
     date = get_user_date()
     search_csv('Date', str(date))
-    show_search_results()
 
 
 def time_search():
-    """Search tasks in the csv based on minutes input
-       Show results
-    """
+    """Search tasks in the csv based on minutes input"""
     minutes = input(TIME_SPENT_PROMPT)
     search_csv('Time', minutes)
-    show_search_results()
 
 
 def string_search():
-    """Search tasks in the csv based on string input
-       Show results
-    """
+    """Search tasks in the csv based on string input"""
     string = input(STRING_PROMPT)
     search_csv('Name', string)
     search_csv('Notes', string)
-    show_search_results()
 
 
 def regex_search():
+    """Search tasks in the csv based on regex pattern input"""
     pattern = input(REGEX_PROMPT)
     search_regex_csv('Name', pattern)
     search_regex_csv('Notes', pattern)
-    show_search_results()
 
 
 def tasks_search():
+    """Provide/Choose search type
+       Show search results
+    """
     while True:
         results_list.clear()
         user_input = input(SEARCH_PROMPT).upper()
@@ -96,4 +103,5 @@ def tasks_search():
             regex_search()
         else:
             print(TRY_AGAIN_PROMPT)
+        show_search_results()
 
