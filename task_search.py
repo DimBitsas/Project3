@@ -1,7 +1,10 @@
-import csv
 import re
 from dates_handler import get_user_date
-from log_csv import filename
+from csv_handler import csv_content
+from csv_handler import NAME
+from csv_handler import TIME
+from csv_handler import NOTES
+from csv_handler import DATE
 
 SEARCH_PROMPT = "\nDo you want to search by: \na) Exact Date\nb) " \
                 "Exact Time Spent\nc) Exact Search\nd) Regex Pattern\ne) Return to menu\n\n"
@@ -20,30 +23,26 @@ class Search:
     @staticmethod
     def search_scv(key, value):
         """Search csv for value, append results list"""
-        try:
-            with open(filename, newline='') as csvfile:
-                csv_reader = csv.DictReader(csvfile, delimiter=',')
-                for row in csv_reader:
-                    if row[key] == value:
-                        results_list.append(row)
-        except FileNotFoundError:
-            print("\nError: File " + filename + " not found\nPlease create an entry first\n")
-        except IOError:
-            print("\nError opening file: " + filename)
+        content = csv_content()
+        for row in content:
+            if row[key] == value:
+                results_list.append(row)
+
+    @staticmethod
+    def search_string_scv(key, value):
+        """Search csv for exact string value, append results list"""
+        content = csv_content()
+        for row in content:
+            if value in row[key]:
+                results_list.append(row)
 
     @staticmethod
     def search_regex_csv(key, pattern):
-        """Search csv for value, append results list"""
-        try:
-            with open(filename, newline='') as csvfile:
-                csv_reader = csv.DictReader(csvfile, delimiter=',')
-                for row in csv_reader:
-                    if re.search(r'%s' % pattern, row[key]):
-                        results_list.append(row)
-        except FileNotFoundError:
-            print("\nError: File " + filename + " not found\nPlease create an entry first\n")
-        except IOError:
-            print("\nError opening file: " + filename)
+        """Search csv for regex pattern, append results list"""
+        content = csv_content()
+        for row in content:
+            if re.search(r'%s' % pattern, row[key]):
+                results_list.append(row)
 
 
 class DateSearch(Search):
@@ -51,7 +50,8 @@ class DateSearch(Search):
         self.date = str(get_user_date())
 
     def search(self):
-        Search.search_scv('Date', self.date)
+        """Search date"""
+        Search.search_scv(DATE, self.date)
 
 
 class TimeSearch(Search):
@@ -65,7 +65,8 @@ class TimeSearch(Search):
             break
 
     def search(self):
-        Search.search_scv('Time', self.minutes)
+        """Search time"""
+        Search.search_scv(TIME, self.minutes)
 
 
 class StringSearch(Search):
@@ -73,8 +74,9 @@ class StringSearch(Search):
         self.string = input(STRING_PROMPT)
 
     def search(self):
-        Search.search_scv('Name', self.string)
-        Search.search_scv('Notes', self.string)
+        """Search exact string"""
+        Search.search_string_scv(NAME, self.string)
+        Search.search_string_scv(NOTES, self.string)
 
 
 class RegexSearch(Search):
@@ -82,8 +84,9 @@ class RegexSearch(Search):
         self.pattern = input(REGEX_PROMPT)
 
     def search(self):
-        Search.search_regex_csv('Name', self.pattern)
-        Search.search_regex_csv('Notes', self.pattern)
+        """Search regex pattern"""
+        Search.search_regex_csv(NAME, self.pattern)
+        Search.search_regex_csv(NOTES, self.pattern)
 
 
 def show_search_results():
@@ -93,12 +96,12 @@ def show_search_results():
         return
     for i in results_list:
         print("\n")
-        print("Date:       ", i['Date'])
-        print("Title:      ", i['Name'])
-        print("Time Spent: ", i['Time'])
-        print("Notes:      ", i['Notes'])
+        print("Date:       ", i[DATE])
+        print("Title:      ", i[NAME])
+        print("Time Spent: ", i[TIME])
+        print("Notes:      ", i[NOTES])
         print("\nResult    ", results_list.index(i)+1, "of", len(results_list), "\n")
-        user_input = input("Enter R for search menu\nEnter any other key for next task\n").upper()
+        user_input = input("Enter R             --> Back to search menu\nEnter any other key --> Next task\n").upper()
         if user_input == 'R':
             return
 

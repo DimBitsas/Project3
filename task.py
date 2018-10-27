@@ -1,5 +1,6 @@
 from dates_handler import get_user_date
-from log_csv import write_csv
+from csv_handler import write_csv
+
 TASK_NAME_PROMPT = "\nTitle of the task: "
 TASK_TIME_PROMPT = "\nTime spent (minutes): "
 TASK_NOTES_PROMPT = "\nNotes (Optional, you can leave this empty): "
