@@ -1,5 +1,6 @@
 import re
 from dates_handler import get_user_date
+from task_time import task_minutes
 from csv_handler import csv_content
 from csv_handler import NAME
 from csv_handler import TIME
@@ -9,9 +10,8 @@ from csv_handler import DATE
 SEARCH_PROMPT = "\nDo you want to search by: \na) Exact Date\nb) " \
                 "Exact Time Spent\nc) Exact Search\nd) Regex Pattern\ne) Return to menu\n\n"
 TRY_AGAIN_PROMPT = "Please provide a valid input\nTry again!!\n\n"
-TIME_SPENT_PROMPT = "Time Spent (minutes)"
-STRING_PROMPT = "Enter the string"
-REGEX_PROMPT = "Enter regex pattern"
+STRING_PROMPT = "Enter the string: "
+REGEX_PROMPT = "Enter regex pattern: "
 
 results_list = []
 
@@ -56,13 +56,7 @@ class DateSearch(Search):
 
 class TimeSearch(Search):
     def __init__(self):
-        while True:
-            minutes = input(TIME_SPENT_PROMPT)
-            if not minutes.isdigit():
-                print("Error: Please provide a numeric value\n")
-                continue
-            self.minutes = minutes
-            break
+        self.minutes = task_minutes()
 
     def search(self):
         """Search time"""
