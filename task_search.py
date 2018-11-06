@@ -21,19 +21,19 @@ class Search:
         raise NotImplementedError()
 
     @staticmethod
-    def search_scv(key, value):
+    def search_csv(key, value):
         """Search csv for value, append results list"""
         content = csv_content()
         for row in content:
-            if row[key] == value:
+            if row[key] == value and row not in results_list:
                 results_list.append(row)
 
     @staticmethod
-    def search_string_scv(key, value):
+    def search_string_csv(key, value):
         """Search csv for exact string value, append results list"""
         content = csv_content()
         for row in content:
-            if value in row[key]:
+            if value in row[key] and row not in results_list:
                 results_list.append(row)
 
     @staticmethod
@@ -41,7 +41,7 @@ class Search:
         """Search csv for regex pattern, append results list"""
         content = csv_content()
         for row in content:
-            if re.search(r'%s' % pattern, row[key]):
+            if re.search(r'%s' % pattern, row[key]) and row not in results_list:
                 results_list.append(row)
 
 
@@ -51,7 +51,7 @@ class DateSearch(Search):
 
     def search(self):
         """Search date"""
-        Search.search_scv(DATE, self.date)
+        Search.search_csv(DATE, self.date)
 
 
 class TimeSearch(Search):
@@ -60,7 +60,7 @@ class TimeSearch(Search):
 
     def search(self):
         """Search time"""
-        Search.search_scv(TIME, self.minutes)
+        Search.search_csv(TIME, self.minutes)
 
 
 class StringSearch(Search):
@@ -69,8 +69,8 @@ class StringSearch(Search):
 
     def search(self):
         """Search exact string"""
-        Search.search_string_scv(NAME, self.string)
-        Search.search_string_scv(NOTES, self.string)
+        Search.search_string_csv(NAME, self.string)
+        Search.search_string_csv(NOTES, self.string)
 
 
 class RegexSearch(Search):
